@@ -15,7 +15,7 @@ export default {
       return new Response(JSON.stringify({
         status: "online",
         message: "Proxy Checker API is running",
-        version: "1.1 (Advanced Worker Mode)"
+        version: "1.2 (Advanced Worker Mode)"
       }), {
         headers: { "Content-Type": "application/json" }
       });
@@ -86,7 +86,10 @@ async function handleCheck(request) {
         });
     }
 
-    const responseBody = results.length === 1 ? results[0] : results;
+    const responseBody = results.length === 1
+        ? { ...results[0], api_version: "1.2" }
+        : results.map(r => ({ ...r, api_version: "1.2" }));
+
     return new Response(JSON.stringify(responseBody, null, 2), {
         headers: { 'Content-Type': 'application/json' }
     });
