@@ -1,33 +1,36 @@
-# Cloudflare Proxy Checker (Pages Version)
+# Cloudflare Proxy Checker (Advanced Worker Version)
 
-This is a proxy checker API running on **Cloudflare Pages**.
+This is a proxy checker API running on **Cloudflare Pages** using an Advanced Worker (`_worker.js`).
 
 ## Project Structure
 ```text
 /
-├── functions/
-│   ├── check.js     <- API logic
-│   └── hello.js     <- Diagnostic endpoint
+├── _worker.js       <- Consolidated API logic and Routing
 ├── index.html       <- Documentation/Frontend
-├── package.json     <- Project metadata
-└── _routes.json     <- Routing configuration
+└── package.json     <- Project metadata
 ```
 
 ## Deployment Instructions
 
-1. **ZIP your files correctly:**
-   - Select `index.html`, `package.json`, `_routes.json`, and the `functions` folder.
-   - Compress them into a single `.zip` file.
-   - **Crucial:** The files must be at the root of the ZIP, not inside another folder.
+### Option 1: GitHub (Recommended)
+1. Push this repository to GitHub.
+2. In Cloudflare Dashboard, go to **Workers & Pages** > **Create** > **Pages** > **Connect to Git**.
+3. Select your repository.
+4. **Configuration (IMPORTANT):**
+   - **Framework preset:** None
+   - **Build command:** (Leave empty)
+   - **Build output directory:** `/` (the root)
+5. **Settings (CRITICAL):**
+   - After the first deployment attempt, go to **Settings** > **Functions**.
+   - Under **Compatibility flags**, add `nodejs_compat` to "Production" and "Preview".
+   - Set **Compatibility date** to `2024-08-01` or newer.
+   - Redeploy the project.
 
-2. **Upload to Cloudflare Pages:**
-   - Go to Cloudflare Dashboard > **Workers & Pages** > **Create** > **Pages** > **Upload assets**.
-   - Upload your ZIP file.
-
-3. **Configure Settings (IMPORTANT):**
-   - Go to your Pages project > **Settings** > **Functions**.
-   - Under **Compatibility flags**, add `nodejs_compat`.
-   - Ensure the **Compatibility date** is at least `2024-08-01`.
+### Option 2: Direct Upload (ZIP)
+1. ZIP only `index.html`, `package.json`, and `_worker.js`.
+2. **Crucial:** The files must be at the root of the ZIP, not inside another folder.
+3. Upload to Cloudflare Pages Dashboard.
+4. Follow the same **Settings (CRITICAL)** steps as Option 1.
 
 ## Usage
 - Check proxy: `https://your-site.pages.dev/check?ip=host:port`

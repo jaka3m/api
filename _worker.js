@@ -1,7 +1,38 @@
 import { connect } from 'cloudflare:sockets';
 
-export async function onRequest(context) {
-    const { request } = context;
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const path = url.pathname;
+
+    // Route: /check
+    if (path === '/check') {
+      return await handleCheck(request);
+    }
+
+    // Route: /hello
+    if (path === '/hello') {
+      return new Response(JSON.stringify({
+        status: "online",
+        message: "Proxy Checker API is running",
+        version: "1.1 (Advanced Worker Mode)"
+      }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    // Fallback: Serve static assets (index.html, etc.)
+    // Note: env.ASSETS is only available if the worker is deployed as part of a Pages project
+    if (env.ASSETS) {
+      return env.ASSETS.fetch(request);
+    }
+
+    // Default if not running in Pages or asset not found
+    return new Response("Not Found", { status: 404 });
+  }
+};
+
+async function handleCheck(request) {
     const url = new URL(request.url);
 
     if (request.method !== 'GET') {
@@ -30,7 +61,7 @@ export async function onRequest(context) {
     const results = new Array(rawInputs.length);
     const queue = rawInputs.map((input, index) => ({ input, index }));
 
-    // Concurrency control: max 3 workers to stay within Cloudflare free tier limits (max 6 outbound)
+    // Concurrency control: max 3 workers to stay within Cloudflare free tier limits
     const workers = Array(Math.min(3, queue.length)).fill(null).map(async () => {
         while (queue.length > 0) {
             const task = queue.shift();
@@ -108,12 +139,8 @@ async function checkProxy(host, path, ip, port) {
     const startTime = Date.now();
     let socket;
     try {
-        // Create TCP connection
         socket = connect({ hostname: ip, port: port });
-
-        // Start TLS with SNI
         const tlsSocket = socket.startTls({ expectedServerHostname: host });
-
         const writer = tlsSocket.writable.getWriter();
         const reader = tlsSocket.readable.getReader();
 
