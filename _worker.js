@@ -139,7 +139,7 @@ async function checkProxy(host, path, ip, port) {
     const startTime = Date.now();
     let socket;
     try {
-        socket = connect({ hostname: ip, port: port });
+        socket = connect({ hostname: ip, port: port, secureTransport: 'starttls' });
         const tlsSocket = socket.startTls({ expectedServerHostname: host });
         const writer = tlsSocket.writable.getWriter();
         const reader = tlsSocket.readable.getReader();
@@ -202,9 +202,10 @@ async function measureSpeed(ip, port) {
     const startTime = Date.now();
     let socket;
     try {
-        socket = connect({ hostname: ip, port: port });
-        const writer = socket.writable.getWriter();
-        const reader = socket.readable.getReader();
+        socket = connect({ hostname: ip, port: port, secureTransport: 'starttls' });
+        const tlsSocket = socket.startTls({ expectedServerHostname: 'www.google.com' });
+        const writer = tlsSocket.writable.getWriter();
+        const reader = tlsSocket.readable.getReader();
 
         const httpRequest =
             `GET /gen_204 HTTP/1.1\r\n` +
