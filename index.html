@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Checker API</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Proxy Checker API</h1>
+    <p>This is a proxy checker API running on Cloudflare Pages.</p>
+
+    <h2>Usage</h2>
+    <p>Send a GET request to <code>/check</code> with the following parameters:</p>
+    <ul>
+        <li><code>ip</code>: IP address and port (e.g., <code>1.2.3.4:8080</code>). Multiple IPs can be separated by commas (max 10).</li>
+        <li><code>format</code>: (Optional) <code>json</code> (default), <code>text</code>, or <code>csv</code>.</li>
+    </ul>
+
+    <h3>Example</h3>
+    <pre><code>GET /check?ip=129.150.58.86:57621,2.59.183.233:444&format=json</code></pre>
+</body>
+</html>
