@@ -1,0 +1,5 @@
+{
+  "name": "cloudflare-proxy-checker",
+  "version": "1.0.0",
+  "description": "Proxy checker on Cloudflare Pages"
+}
