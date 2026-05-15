@@ -15,7 +15,7 @@ export default {
       return new Response(JSON.stringify({
         status: "online",
         message: "Proxy Checker API is running",
-        version: "1.2 (Advanced Worker Mode)"
+        version: "1.3 (Advanced Worker Mode)"
       }), {
         headers: { "Content-Type": "application/json" }
       });
@@ -87,8 +87,8 @@ async function handleCheck(request) {
     }
 
     const responseBody = results.length === 1
-        ? { ...results[0], api_version: "1.2" }
-        : results.map(r => ({ ...r, api_version: "1.2" }));
+        ? { ...results[0], api_version: "1.3" }
+        : results.map(r => ({ ...r, api_version: "1.3" }));
 
     return new Response(JSON.stringify(responseBody, null, 2), {
         headers: { 'Content-Type': 'application/json' }
@@ -142,7 +142,7 @@ async function checkProxy(host, path, ip, port) {
     const startTime = Date.now();
     let socket;
     try {
-        socket = connect({ hostname: ip, port: port, secureTransport: 'starttls' });
+        socket = connect({ hostname: ip, port: port }, { secureTransport: 'starttls' });
         const tlsSocket = socket.startTls({ expectedServerHostname: host });
         const writer = tlsSocket.writable.getWriter();
         const reader = tlsSocket.readable.getReader();
@@ -205,7 +205,7 @@ async function measureSpeed(ip, port) {
     const startTime = Date.now();
     let socket;
     try {
-        socket = connect({ hostname: ip, port: port, secureTransport: 'starttls' });
+        socket = connect({ hostname: ip, port: port }, { secureTransport: 'starttls' });
         const tlsSocket = socket.startTls({ expectedServerHostname: 'www.google.com' });
         const writer = tlsSocket.writable.getWriter();
         const reader = tlsSocket.readable.getReader();
